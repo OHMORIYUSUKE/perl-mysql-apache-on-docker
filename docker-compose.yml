@@ -1,0 +1,34 @@
+version: "3"
+services:
+  web:
+    build: ./server
+    volumes:
+      - ./server/app:/var/www/html
+      - ./server/log://var/log/apache2
+    ports:
+      - 80:80
+
+  db:
+    build: ./db
+    volumes:
+      - ./db/save_data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: testdb
+      MYSQL_USER: test
+      MYSQL_PASSWORD: test
+    ports:
+      - 3306:3306
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    environment:
+      PMA_ARBITRARY: 1
+      PMA_HOST: db
+      PMA_USER: root
+      PMA_PASSWORD: root
+    restart: always
+    ports:
+      - 3030:80
+    depends_on:
+      - db
