@@ -25,7 +25,7 @@ my $sth = $dbh->prepare("SELECT * FROM user");
 $sth->execute();
 while (my $ary_ref = $sth->fetchrow_arrayref) {
   my ($id, $name) = @$ary_ref;
-  print "<h3>", $id, " ", $name, "</h3>\n";
+  print "<h3>", $id, " , ", $name, "</h3>\n";
 }
 $sth->finish;
 $dbh->disconnect;
