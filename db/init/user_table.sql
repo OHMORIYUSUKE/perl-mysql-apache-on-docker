@@ -3,28 +3,19 @@
 --
 
 CREATE TABLE `user` (
-  `id` int(11) NOT NULL,
-  `name` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  PRIMARY KEY (id)
+);
 
 --
 -- テーブルのデータのダンプ `user`
 --
 
-INSERT INTO `user` (`id`, `name`) VALUES
-(1, 'Amami Haruka'),
-(2, 'Kasuga Mirai'),
-(3, 'Shimamura Uzuki'),
-(4, '高坂 穂乃果'),
-(5, '高海 千歌'),
-(6, '上原 歩夢');
-
---
--- ダンプしたテーブルのインデックス
---
-
---
--- テーブルのインデックス `user`
---
-ALTER TABLE `user`
-  ADD PRIMARY KEY (`id`);
+INSERT INTO `user` (`name`) VALUES
+('Amami Haruka'),
+('Kasuga Mirai'),
+('Shimamura Uzuki'),
+('高坂 穂乃果'),
+('高海 千歌'),
+('上原 歩夢');

@@ -41,19 +41,41 @@ print "ŒŸõƒ[ƒh : ".$name_post;
 
 my $name = "%".$name_post."%";
 
-$sth = $dbh->prepare("SELECT * FROM user WHERE name LIKE ?");
-$sth->bind_param(1, $name); 
-$sth->execute();
+if($name_post ne ""){
+  $sth = $dbh->prepare("SELECT * FROM user WHERE name LIKE ?");
+  $sth->bind_param(1, $name); 
+  $sth->execute();
 
-while (my $ary_ref = $sth->fetchrow_arrayref) {
-  my ($id, $name) = @$ary_ref;
-  print "<h3>", $id, " , ", $name, "</h3>\n";
+  while (my $ary_ref = $sth->fetchrow_arrayref) {
+    my ($id, $name) = @$ary_ref;
+    print "<h3>", $id, " , ", $name, "</h3>\n";
+  }
 }
 
-$sth->finish;
-$dbh->disconnect;
 
 print '<FORM method="POST" action="./index.pl">';
 print '<LABEL>–¼‘O</LABEL><INPUT type="text" name="name">';
 print "<button>ŒŸõ</button>";
+print "</FORM>";
+
+print "<hr>";
+
+# ------ADD DB-------
+
+my $name_post_add = $query->param('nameadd');
+if($name_post_add ne ""){
+  $sth = $dbh->prepare("INSERT INTO user(name) VALUES (?)");
+  $sth->bind_param(1, $name_post_add); 
+  $sth->execute();
+  print $name_post_add." ‚ğ“o˜^‚µ‚Ü‚µ‚½";
+}
+
+
+$sth->finish;
+$dbh->disconnect;
+
+print "<h2>DB‚É“o˜^</h2>";
+print '<FORM method="POST" action="./index.pl">';
+print '<LABEL>–¼‘O</LABEL><INPUT type="text" name="nameadd">';
+print "<button>“o˜^</button>";
 print "</FORM>";
