@@ -67,7 +67,11 @@ if($name_post_add ne ""){
   $sth = $dbh->prepare("INSERT INTO user(name) VALUES (?)");
   $sth->bind_param(1, $name_post_add); 
   $sth->execute();
-  print $name_post_add." ‚ð“o˜^‚µ‚Ü‚µ‚½";
+  print "<script>";
+  print "window.alert('".$name_post_add." ‚ð“o˜^‚µ‚Ü‚µ‚½')";
+  print "</script>";
+  print "<meta http-equiv='refresh' content='0'; URL='./'>";
+  print "\n";
 }
 
 
