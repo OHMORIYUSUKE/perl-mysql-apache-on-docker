@@ -19,8 +19,11 @@ my $dbh = DBI->connect( $dsn, $user, $pass, {
     PrintError => 0,
     RaiseError => 1,
     ShowErrorStatement => 1,
-    AutoInactiveDestroy => 1
+    AutoInactiveDestroy => 1,
+    mysql_enable_utf8 => 1
 })|| die $DBI::errstr;
+
+$dbh->do("set names sjis");
 
 my $sth = $dbh->prepare("SELECT * FROM user");
 $sth->execute();

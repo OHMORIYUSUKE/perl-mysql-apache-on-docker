@@ -14,7 +14,10 @@ CREATE TABLE `user` (
 INSERT INTO `user` (`id`, `name`) VALUES
 (1, 'Amami Haruka'),
 (2, 'Kasuga Mirai'),
-(3, 'Shimamura Uzuki');
+(3, 'Shimamura Uzuki'),
+(4, '高坂 穂乃果'),
+(5, '高海 千歌'),
+(6, '上原 歩夢');
 
 --
 -- ダンプしたテーブルのインデックス
