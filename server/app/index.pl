@@ -1,5 +1,6 @@
 #!/usr/bin/perl
 
+use CGI;
 use strict;
 use warnings;
 use DBI;
@@ -7,12 +8,12 @@ use DBI;
 print "Content-type: text/html\n\n";
 print "<H1>Hello World Perl !!</H1>\n";
 
-# ãƒ‡ãƒ¼ã‚¿ãƒ™ãƒ¼ã‚¹æŽ¥ç¶šæº–å‚™
+# ƒf[ƒ^ƒx[ƒXÚ‘±€”õ
 my $dsn = "dbi:mysql:database=testdb;host=db;port=3306";
 my $user = "root";
 my $pass ="root";
 
-# ãƒ‡ãƒ¼ã‚¿ãƒ™ãƒ¼ã‚¹ãƒãƒ³ãƒ‰ãƒ«
+# ƒf[ƒ^ƒx[ƒXƒnƒ“ƒhƒ‹
 my $dbh = DBI->connect( $dsn, $user, $pass, {
     AutoCommit => 1,
     PrintError => 0,
@@ -27,5 +28,29 @@ while (my $ary_ref = $sth->fetchrow_arrayref) {
   my ($id, $name) = @$ary_ref;
   print "<h3>", $id, " , ", $name, "</h3>\n";
 }
+
+print "<hr>";
+
+my $query = CGI->new;
+my $name_post = $query->param('name');
+
+print "ŒŸõƒ[ƒh : ".$name_post;
+
+my $name = "%".$name_post."%";
+
+$sth = $dbh->prepare("SELECT * FROM user WHERE name LIKE ?");
+$sth->bind_param(1, $name); 
+$sth->execute();
+
+while (my $ary_ref = $sth->fetchrow_arrayref) {
+  my ($id, $name) = @$ary_ref;
+  print "<h3>", $id, " , ", $name, "</h3>\n";
+}
+
 $sth->finish;
 $dbh->disconnect;
+
+print '<FORM method="POST" action="./index.pl">';
+print '<LABEL>–¼‘O</LABEL><INPUT type="text" name="name">';
+print "<button>ŒŸõ</button>";
+print "</FORM>";
