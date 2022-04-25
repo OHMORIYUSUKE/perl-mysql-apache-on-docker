@@ -5,9 +5,6 @@ use strict;
 use warnings;
 use DBI;
 
-print "Content-type: text/html\n\n";
-print "<H1>Hello World Perl !!</H1>\n";
-
 # データベース接続準備
 my $dsn = "dbi:mysql:database=testdb;host=db;port=3306";
 my $user = "root";
@@ -24,6 +21,18 @@ my $dbh = DBI->connect( $dsn, $user, $pass, {
 })|| die $DBI::errstr;
 
 $dbh->do("set names sjis");
+# ------ADD DB-------
+my $query = CGI->new;
+my $name_post_add = $query->param('nameadd');
+if($name_post_add ne ""){
+  my $sth = $dbh->prepare("INSERT INTO user(name) VALUES (?)");
+  $sth->bind_param(1, $name_post_add); 
+  $sth->execute();
+  print "Location: ./\n\n";
+}
+
+print "Content-type: text/html\n\n";
+print "<H1>Hello World Perl !!</H1>\n";
 
 my $sth = $dbh->prepare("SELECT * FROM user");
 $sth->execute();
@@ -34,7 +43,6 @@ while (my $ary_ref = $sth->fetchrow_arrayref) {
 
 print "<hr>";
 
-my $query = CGI->new;
 my $name_post = $query->param('name');
 
 print "検索ワード : ".$name_post;
@@ -53,33 +61,19 @@ if($name_post ne ""){
 }
 
 
-print '<FORM method="POST" action="./index.pl">';
+print '<FORM method="POST" action="./">';
 print '<LABEL>名前</LABEL><INPUT type="text" name="name">';
 print "<button>検索</button>";
 print "</FORM>";
 
 print "<hr>";
 
-# ------ADD DB-------
-
-my $name_post_add = $query->param('nameadd');
-if($name_post_add ne ""){
-  $sth = $dbh->prepare("INSERT INTO user(name) VALUES (?)");
-  $sth->bind_param(1, $name_post_add); 
-  $sth->execute();
-  print "<script>";
-  print "window.alert('".$name_post_add." を登録しました')";
-  print "</script>";
-  print "<meta http-equiv='refresh' content='0'; URL='./'>";
-  print "\n";
-}
-
 
 $sth->finish;
 $dbh->disconnect;
 
 print "<h2>DBに登録</h2>";
-print '<FORM method="POST" action="./index.pl">';
+print '<FORM method="POST" action="./">';
 print '<LABEL>名前</LABEL><INPUT type="text" name="nameadd">';
 print "<button>登録</button>";
 print "</FORM>";
