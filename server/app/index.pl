@@ -21,8 +21,16 @@ my $dbh = DBI->connect( $dsn, $user, $pass, {
 })|| die $DBI::errstr;
 
 $dbh->do("set names sjis");
-# ------ADD DB-------
+
+
 my $query = CGI->new;
+# –¼‘OŒŸõ
+
+my $name = $query->param('name');
+
+
+# –¼‘O’Ç‰Á
+
 my $name_post_add = $query->param('nameadd');
 if($name_post_add ne ""){
   my $sth = $dbh->prepare("INSERT INTO user(name) VALUES (?)");
@@ -31,36 +39,46 @@ if($name_post_add ne ""){
   print "Location: ./\n\n";
 }
 
-print "Content-type: text/html\n\n";
-print "<H1>Hello World Perl !!</H1>\n";
+#
+# ---- PRINT -------
+#
 
-my $sth = $dbh->prepare("SELECT * FROM user");
-$sth->execute();
-while (my $ary_ref = $sth->fetchrow_arrayref) {
-  my ($id, $name) = @$ary_ref;
-  print "<h3>", $id, " , ", $name, "</h3>\n";
+print "Content-Type: text/html; charset=Shift_JIS\n\n";
+print "<html lang='ja'>";
+print "<head><title>Œf¦”Â</title><link rel='stylesheet' href='style/main.css'></head>";
+print "<body>";
+
+print "<div class='blocktext'>";
+
+print "<h3>Œf¦”Â</h3>";
+
+print "<h4>ƒƒ“ƒo[ˆê——</h4>";
+print "ŒŸõ : ".$name;
+
+if($name ne ""){
+    $name = "%".$name."%";
+    my $sth = $dbh->prepare("SELECT * FROM user WHERE name LIKE ?");
+    $sth->bind_param(1, $name); 
+    $sth->execute();
+
+    while (my $ary_ref = $sth->fetchrow_arrayref) {
+        my ($id, $name) = @$ary_ref;
+        print "<h3>", $id, " , ", $name, "</h3>\n";
+    }
+}else{
+    my $sth = $dbh->prepare("SELECT * FROM user WHERE name LIKE ?");
+    $sth->bind_param(1, $name); 
+    $sth->execute();
+
+    while (my $ary_ref = $sth->fetchrow_arrayref) {
+        my ($id, $name) = @$ary_ref;
+        print "<h3>", $id, " , ", $name, "</h3>\n";
+    }
 }
 
 print "<hr>";
 
-my $name_post = $query->param('name');
-
-print "ŒŸõƒ[ƒh : ".$name_post;
-
-my $name = "%".$name_post."%";
-
-if($name_post ne ""){
-  $sth = $dbh->prepare("SELECT * FROM user WHERE name LIKE ?");
-  $sth->bind_param(1, $name); 
-  $sth->execute();
-
-  while (my $ary_ref = $sth->fetchrow_arrayref) {
-    my ($id, $name) = @$ary_ref;
-    print "<h3>", $id, " , ", $name, "</h3>\n";
-  }
-}
-
-
+print "<h5>–¼‘O‚ğŒŸõ</h5>";
 print '<FORM method="POST" action="./">';
 print '<LABEL>–¼‘O</LABEL><INPUT type="text" name="name">';
 print "<button>ŒŸõ</button>";
@@ -68,12 +86,14 @@ print "</FORM>";
 
 print "<hr>";
 
-
-$sth->finish;
-$dbh->disconnect;
-
-print "<h2>DB‚É“o˜^</h2>";
+print "<h5>–¼‘O‚ğ“o˜^</h5>";
 print '<FORM method="POST" action="./">';
 print '<LABEL>–¼‘O</LABEL><INPUT type="text" name="nameadd">';
 print "<button>“o˜^</button>";
 print "</FORM>";
+
+print "</div>";
+
+print "</body>";
+print "</html>";
+
