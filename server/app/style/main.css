@@ -6,3 +6,7 @@
     overflow-wrap: break-word;
     border: rgb(0, 0, 0) 1px solid;
 }
+
+.container {
+    display: flex;
+}

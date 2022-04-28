@@ -1,99 +1,103 @@
 #!/usr/bin/perl
 
+use utf8;
 use CGI;
 use strict;
 use warnings;
 use DBI;
 
-# ƒf[ƒ^ƒx[ƒXÚ‘±€”õ
-my $dsn = "dbi:mysql:database=testdb;host=db;port=3306";
-my $user = "root";
-my $pass ="root";
+binmode STDOUT, ":encoding(Shift_JIS)";
 
-# ƒf[ƒ^ƒx[ƒXƒnƒ“ƒhƒ‹
-my $dbh = DBI->connect( $dsn, $user, $pass, {
+# ãƒ‡ãƒ¼ã‚¿ãƒ™ãƒ¼ã‚¹æ¥ç¶šæº–å‚™
+my $dsn = "dbi:mysql:database=fuel_dev;host=db;port=3306";
+my $user = "root";
+my $pass = "root";
+
+# ãƒ‡ãƒ¼ã‚¿ãƒ™ãƒ¼ã‚¹ãƒãƒ³ãƒ‰ãƒ«
+my $dbh = DBI -> connect($dsn, $user, $pass, {
     AutoCommit => 1,
     PrintError => 0,
     RaiseError => 1,
     ShowErrorStatement => 1,
     AutoInactiveDestroy => 1,
     mysql_enable_utf8 => 1
-})|| die $DBI::errstr;
+}) || die $DBI::errstr;
 
-$dbh->do("set names sjis");
+$dbh -> do("set names utf8");
 
+my $query = CGI -> new;
+# åå‰æ¤œç´¢
 
-my $query = CGI->new;
-# –¼‘OŒŸõ
-
-my $name = $query->param('name');
-
-
-# –¼‘O’Ç‰Á
-
-my $name_post_add = $query->param('nameadd');
-if($name_post_add ne ""){
-  my $sth = $dbh->prepare("INSERT INTO user(name) VALUES (?)");
-  $sth->bind_param(1, $name_post_add); 
-  $sth->execute();
-  print "Location: ./\n\n";
-}
+my $ch_name = $query -> param('ch_name');
+my $cv_name = $query -> param('cv_name');
 
 #
-# ---- PRINT -------
+#-- --PRINT-- -- -- -
 #
 
-print "Content-Type: text/html; charset=Shift_JIS\n\n";
+print "Content-Type: text/html;\n\n";
 print "<html lang='ja'>";
-print "<head><title>Œf¦”Â</title><link rel='stylesheet' href='style/main.css'></head>";
+print "<head><title>ã‚¢ã‚¤ãƒã‚¹å›³é‘‘</title><link rel='stylesheet' href='style/main.css'></head>";
 print "<body>";
 
 print "<div class='blocktext'>";
 
-print "<h3>Œf¦”Â</h3>";
+print '<div class="container">';
 
-print "<h4>ƒƒ“ƒo[ˆê——</h4>";
-print "ŒŸõ : ".$name;
+print "<div>";
+print "<h5>ã‚¢ã‚¤ãƒ‰ãƒ«ã®åå‰ã‹ã‚‰æ¤œç´¢</h5>";
+print '<FORM method="POST" action="./">';
+print '<LABEL>åå‰</LABEL><INPUT type="text" name="ch_name" value="', $ch_name, '">';
+print "<button>æ¤œç´¢</button>";
+print "</FORM>";
+print "</div>";
 
-if($name ne ""){
-    $name = "%".$name."%";
-    my $sth = $dbh->prepare("SELECT * FROM user WHERE name LIKE ?");
-    $sth->bind_param(1, $name); 
-    $sth->execute();
+print "<div>";
+print "<h5>å£°å„ªã®åå‰ã‹ã‚‰æ¤œç´¢</h5>";
+print '<FORM method="POST" action="./">';
+print '<LABEL>åå‰</LABEL><INPUT type="text" name="cv_name" value="', $cv_name, '">';
+print "<button>æ¤œç´¢</button>";
+print "</FORM>";
+print "</div>";
 
-    while (my $ary_ref = $sth->fetchrow_arrayref) {
-        my ($id, $name) = @$ary_ref;
-        print "<h3>", $id, " , ", $name, "</h3>\n";
+print '<FORM method="POST" action="./">';
+print '<INPUT type="hidden" name="cv_name" value="%">';
+print '<INPUT type="hidden" name="ch_name" value="%">';
+print "<button>ã™ã¹ã¦è¡¨\ç¤ºã™ã‚‹</button>";
+print "</FORM>";
+
+print "</div>";
+
+
+$ch_name = "%".$ch_name."%";
+$cv_name = "%".$cv_name."%";
+if ($ch_name ne "") {
+    my $sth = $dbh -> prepare("SELECT * FROM imas_characters WHERE ch_name LIKE ? AND cv_name LIKE ?");
+    $sth -> bind_param(1, $ch_name);
+    $sth -> bind_param(2, $cv_name);
+    $sth -> execute();
+
+    while (my $ary_ref = $sth -> fetchrow_arrayref) {
+        my($id, $type, $ch_name, $ch_name_ruby, $ch_family_name, $ch_family_name_ruby, $ch_first_name, $ch_first_name_ruby, $ch_birth_month, $ch_birth_day, $ch_gender, $is_idol, $ch_blood_type, $ch_color, $cv_name, $cv_name_ruby, $cv_family_name, $cv_family_name_ruby, $cv_first_name, $cv_first_name_ruby, $cv_birth_month, $cv_birth_day, $cv_gender, $cv_nickname) = @$ary_ref;
+        print "<hr>";
+        print "<p>", $id, "ã€€", $type, "ã€€<ruby><rb>", $ch_name, "<rb><rp>ï¼ˆ</rp><rt>", $ch_name_ruby, "</rt><rp>ï¼‰</rp></ruby>ã€€", $ch_birth_month, "æœˆ", $ch_birth_day, "æ—¥ç”Ÿã¾ã‚Œã€€", $ch_gender == 1 ? "å¥³æ€§" : "ç”·æ€§", "ã€€", $is_idol == 1 ? "ã‚¢ã‚¤ãƒ‰ãƒ«" : "ã‚¢ã‚¤ãƒ‰ãƒ«ä»¥å¤–", "ã€€", $ch_blood_type, "å‹", "</p>\n";
+        $cv_name ? print "<p>ã€€ã€€<ruby><rb>", $cv_name, "<rb><rp>ï¼ˆ</rp><rt>", $cv_name_ruby, "</rt><rp>ï¼‰</rp></ruby>ã€€", $cv_birth_month, "æœˆ", $cv_birth_day, "æ—¥ç”Ÿã¾ã‚Œ", "ã€€", $cv_gender == 1 ? "å¥³æ€§" : "ç”·æ€§", "</p>" : print "";
     }
-}else{
-    my $sth = $dbh->prepare("SELECT * FROM user WHERE name LIKE ?");
-    $sth->bind_param(1, $name); 
-    $sth->execute();
+} else {
+    my $sth = $dbh -> prepare("SELECT * FROM imas_characters WHERE ch_name LIKE ? AND cv_name LIKE ?");
+    $sth -> bind_param(1, $ch_name);
+    $sth -> bind_param(2, $cv_name);
+    $sth -> execute();
 
-    while (my $ary_ref = $sth->fetchrow_arrayref) {
-        my ($id, $name) = @$ary_ref;
-        print "<h3>", $id, " , ", $name, "</h3>\n";
+    while (my $ary_ref = $sth -> fetchrow_arrayref) {
+        my($id, $type, $ch_name, $ch_name_ruby, $ch_family_name, $ch_family_name_ruby, $ch_first_name, $ch_first_name_ruby, $ch_birth_month, $ch_birth_day, $ch_gender, $is_idol, $ch_blood_type, $ch_color, $cv_name, $cv_name_ruby, $cv_family_name, $cv_family_name_ruby, $cv_first_name, $cv_first_name_ruby, $cv_birth_month, $cv_birth_day, $cv_gender, $cv_nickname) = @$ary_ref;
+        print "<hr>";
+        print "<p>", $id, "ã€€", $type, "ã€€<ruby><rb>", $ch_name, "<rb><rp>ï¼ˆ</rp><rt>", $ch_name_ruby, "</rt><rp>ï¼‰</rp></ruby>ã€€", $ch_birth_month, "æœˆ", $ch_birth_day, "æ—¥ç”Ÿã¾ã‚Œã€€", $ch_gender == 1 ? "å¥³æ€§" : "ç”·æ€§", "ã€€", $is_idol == 1 ? "ã‚¢ã‚¤ãƒ‰ãƒ«" : "ã‚¢ã‚¤ãƒ‰ãƒ«ä»¥å¤–", "ã€€", $ch_blood_type, "å‹", "</p>\n";
+        $cv_name ? print "<p>ã€€ã€€<ruby><rb>", $cv_name, "<rb><rp>ï¼ˆ</rp><rt>", $cv_name_ruby, "</rt><rp>ï¼‰</rp></ruby>ã€€", $cv_birth_month, "æœˆ", $cv_birth_day, "æ—¥ç”Ÿã¾ã‚Œ", "ã€€", $cv_gender == 1 ? "å¥³æ€§" : "ç”·æ€§", "</p>" : print "";
     }
 }
-
-print "<hr>";
-
-print "<h5>–¼‘O‚ğŒŸõ</h5>";
-print '<FORM method="POST" action="./">';
-print '<LABEL>–¼‘O</LABEL><INPUT type="text" name="name">';
-print "<button>ŒŸõ</button>";
-print "</FORM>";
-
-print "<hr>";
-
-print "<h5>–¼‘O‚ğ“o˜^</h5>";
-print '<FORM method="POST" action="./">';
-print '<LABEL>–¼‘O</LABEL><INPUT type="text" name="nameadd">';
-print "<button>“o˜^</button>";
-print "</FORM>";
 
 print "</div>";
 
 print "</body>";
 print "</html>";
-
