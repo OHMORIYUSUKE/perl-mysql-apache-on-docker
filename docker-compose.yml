@@ -10,6 +10,7 @@ services:
 
   db:
     build: ./db
+    platform: linux/amd64
     volumes:
       - ./db/save_data:/var/lib/mysql
       - ./db/init:/docker-entrypoint-initdb.d
