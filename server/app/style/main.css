@@ -1,71 +1,28 @@
-/* 全体の背景とフォントスタイルを調整 */
-body {
-  font-family: Arial, sans-serif;
-  background-color: #f4f4f4;
-  color: #333;
-  margin: 0;
-  padding: 0;
-}
-
-/* ブロックのスタイルを調整 */
 .blocktext {
-  margin: 20px auto;
-  max-width: 800px;
-  padding: 20px;
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 60%;
+  min-width: 20%;
+  overflow-wrap: break-word;
+  border: rgb(0, 0, 0) 1px solid;
 }
 
-/* コンテナのスタイルを調整 */
 .container {
   display: flex;
-  flex-wrap: wrap;
-  gap: 20px; /* アイテム間のスペースを調整 */
 }
 
-/* フォームのスタイルを調整 */
-form {
-  width: 100%;
+/* フォームのスタイル */
+.search-form {
+  margin-bottom: 20px;
 }
 
-label {
-  display: block;
-  font-weight: bold;
-  margin-bottom: 5px;
+/* 検索結果アイテムのスタイル */
+.result-item {
+  display: flex;
+  border-bottom: 1px solid #ddd;
+  padding: 10px 0;
 }
 
-input[type="text"],
-select {
-  width: 100%;
-  padding: 8px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  box-sizing: border-box;
-}
-
-input[type="text"]:focus,
-select:focus {
-  border-color: #007bff;
-  outline: none;
-}
-
-button {
-  padding: 10px 15px;
-  border: none;
-  border-radius: 4px;
-  background-color: #007bff;
-  color: #fff;
-  font-size: 16px;
-  cursor: pointer;
-  margin-top: 10px;
-}
-
-button:hover {
-  background-color: #0056b3;
-}
-
-/* オプションのスタイル */
-option {
-  padding: 10px;
+.character {
+  padding-left: 30px;
 }

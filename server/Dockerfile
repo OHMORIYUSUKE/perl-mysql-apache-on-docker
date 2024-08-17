@@ -25,8 +25,8 @@ COPY ./app /var/www/html
 # デフォルトの作業ディレクトリを/var/www/htmlに設定
 WORKDIR /var/www/html
 
-RUN chmod 777 /var/www/html/
-RUN chmod 777 /usr/bin/perl
+RUN chmod 755 /var/www/html/
+RUN chmod 755 /usr/bin/perl
 
 # Webサーバーへのアクセス用にポート80を公開
 EXPOSE 80
