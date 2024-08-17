@@ -9,3 +9,5 @@ $ docker compose up --build
 [http://localhost/](http://localhost/)にアクセス
 
 [http://localhost:3030/](http://localhost:3030/) PHPMyAdmin
+
+`chmod 777 index.pl`
