@@ -35,7 +35,7 @@ my $type = decode('UTF-8', $query->param('type') || '%');
 # ヘッダー出力
 print "Content-Type: text/html; charset=UTF-8;\n\n";
 print "<html lang='ja'>";
-print "<head><title>アイマス図鑑</title><link rel='stylesheet' href='style/main.css'></head>";
+print "<head><title>アイドル名簿</title><link rel='stylesheet' href='style/main.css'></head>";
 print "<body>";
 
 print "<div class='blocktext'>";
@@ -122,7 +122,11 @@ sub print_results {
     # 条件がすべて空の場合は全てのレコードを取得
     my $sql_query = ($ch_name eq '' && $cv_name eq '' && $ch_blood_type eq '%' && $type eq '%')
                     ? "SELECT * FROM imas_characters"
-                    : "SELECT * FROM imas_characters WHERE ch_name LIKE ? AND cv_name LIKE ? AND ch_blood_type LIKE ? AND type LIKE ?";
+                    : "SELECT * FROM imas_characters WHERE 
+                        (ch_name LIKE ? OR ch_name_ruby LIKE ?) 
+                        AND (cv_name LIKE ? OR cv_name_ruby LIKE ?) 
+                        AND ch_blood_type LIKE ? 
+                        AND type LIKE ?";
 
     my $sth = $dbh->prepare($sql_query);
 
@@ -137,9 +141,11 @@ sub print_results {
     } else {
         # フィルタリングの場合はパラメータをバインド
         $sth->bind_param(1, "%$ch_name%");
-        $sth->bind_param(2, "%$cv_name%");
-        $sth->bind_param(3, $ch_blood_type);
-        $sth->bind_param(4, $type);
+        $sth->bind_param(2, "%$ch_name%");
+        $sth->bind_param(3, "%$cv_name%");
+        $sth->bind_param(4, "%$cv_name%");
+        $sth->bind_param(5, $ch_blood_type);
+        $sth->bind_param(6, $type);
 
         if ($sth->err) {
             print "<p>パラメータのバインド中にエラーが発生しました: ", $sth->errstr, "</p>";
@@ -154,13 +160,14 @@ sub print_results {
         }
     }
 
+    # 結果を表示
     while (my $ary_ref = $sth->fetchrow_arrayref) {
         my ($id, $type, $ch_name, $ch_name_ruby, $ch_family_name, $ch_family_name_ruby, $ch_first_name, $ch_first_name_ruby, $ch_birth_month, $ch_birth_day, $ch_gender, $is_idol, $ch_blood_type, $ch_color, $cv_name, $cv_name_ruby, $cv_family_name, $cv_family_name_ruby, $cv_first_name, $cv_first_name_ruby, $cv_birth_month, $cv_birth_day, $cv_gender, $cv_nickname) = @$ary_ref;
         print "<div>";
         print "<p class='character'><b>", $id, "</b>　", escape_html($type), "</p>\n";
-        print "<p class='character'>　　<ruby><rb>", escape_html($ch_name), "<rb><rp>（</rp><rt>", escape_html($ch_name_ruby), "</rt><rp>）</rp></ruby>　", $ch_birth_month, "月", $ch_birth_day, "日生まれ　", $ch_gender == 1 ? "女性" : "男性", "　", $is_idol == 1 ? "アイドル" : "アイドル以外", "　", escape_html($ch_blood_type), "型", "</p>";
+        print "<p class='character'>　　 <ruby><rb>", escape_html($ch_name), "<rb><rp>（</rp><rt>", escape_html($ch_name_ruby), "</rt><rp>）</rp></ruby>　", $ch_birth_month, "月", $ch_birth_day, "日生まれ　", $ch_gender == 1 ? "女性" : "男性", "　", $is_idol == 1 ? "アイドル" : "アイドル以外", "　", escape_html($ch_blood_type), "型", "</p>";
         if ($cv_name) {
-            print "<p class='character'>　　CV：<ruby><rb>", escape_html($cv_name), "<rb><rp>（</rp><rt>", escape_html($cv_name_ruby), "</rt><rp>）</rp></ruby>　", $cv_birth_month, "月", $cv_birth_day, "日生まれ", "　", $cv_gender == 1 ? "女性" : "男性", "</p>";
+            print "<p class='character'>　　 CV：<ruby><rb>", escape_html($cv_name), "<rb><rp>（</rp><rt>", escape_html($cv_name_ruby), "</rt><rp>）</rp></ruby>　", $cv_birth_month, "月", $cv_birth_day, "日生まれ", "　", $cv_gender == 1 ? "女性" : "男性", "</p>";
         }
         print "</div>";
         print "<hr>";
