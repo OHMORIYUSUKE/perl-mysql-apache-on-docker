@@ -4,10 +4,10 @@ function updatePath() {
 
   // 各フィールドから値を取得
   var params = [
-    { id: "ch_name", name: "ch_name" },
-    { id: "cv_name", name: "cv_name" },
-    { id: "ch_blood_type", name: "ch_blood_type" },
-    { id: "type", name: "type" },
+    { id: "ch_name", name: "ch-name" },
+    { id: "cv_name", name: "cv-name" },
+    { id: "ch_blood_type", name: "ch-blood-type" },
+    { id: "group", name: "group" },
   ]
     .map((field) => {
       var value = document.getElementById(field.id).value;

@@ -48,16 +48,16 @@ for ( my $i = 0 ; $i < @path_parts ; $i += 2 ) {
     my $param_name = $path_parts[$i];
     my $param_value = decode( 'UTF-8', $path_parts[ $i + 1 ] || '' );
 
-    if ( $param_name eq 'ch_name' ) {
+    if ( $param_name eq 'ch-name' ) {
         $ch_name = $param_value;
     }
-    elsif ( $param_name eq 'cv_name' ) {
+    elsif ( $param_name eq 'cv-name' ) {
         $cv_name = $param_value;
     }
-    elsif ( $param_name eq 'ch_blood_type' ) {
+    elsif ( $param_name eq 'ch-blood-type' ) {
         $ch_blood_type = $param_value;
     }
-    elsif ( $param_name eq 'type' ) {
+    elsif ( $param_name eq 'group' ) {
         $type = $param_value;
     }
 }
@@ -104,7 +104,7 @@ print "</div>";
 
 print '<div style="margin: 10px">';
 print "<h5>グループ</h5>";
-print '<select id="type" name="type">';
+print '<select id="group" name="group">';
 print "<option value=''>指定なし</option>";
 $sth = $dbh->prepare("SELECT DISTINCT type FROM imas_characters");
 $sth->execute();
