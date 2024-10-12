@@ -134,12 +134,15 @@ sub print_results {
           && $cv_name eq ''
           && $ch_blood_type eq '%'
           && $type eq '%' )
-      ? "SELECT * FROM imas_characters"
-      : "SELECT * FROM imas_characters WHERE 
-                        (ch_name LIKE ? OR ch_name_ruby LIKE ?) 
-                        AND (cv_name LIKE ? OR cv_name_ruby LIKE ?) 
-                        AND ch_blood_type LIKE ? 
-                        AND type LIKE ?";
+      ? "SELECT ic.*, ici.image FROM imas_characters ic
+         LEFT JOIN imas_characters_image ici ON ic.ch_first_name = ici.name"
+      : "SELECT ic.*, ici.image FROM imas_characters ic
+         LEFT JOIN imas_characters_image ici ON ic.ch_first_name = ici.name
+         WHERE 
+            (ic.ch_name LIKE ? OR ic.ch_name_ruby LIKE ?) 
+            AND (ic.cv_name LIKE ? OR ic.cv_name_ruby LIKE ?) 
+            AND ic.ch_blood_type LIKE ? 
+            AND ic.type LIKE ?";
 
     my $sth = $dbh->prepare($sql_query);
 
@@ -155,7 +158,7 @@ sub print_results {
         && $ch_blood_type eq '%'
         && $type eq '%' )
     {
-# 全てのレコードを取得する場合はパラメータのバインドを不要
+        # 全てのレコードを取得する場合はパラメータのバインドを不要
         $sth->execute();
     }
     else {
@@ -194,17 +197,26 @@ sub print_results {
             $ch_blood_type, $ch_color,           $cv_name,
             $cv_name_ruby,  $cv_family_name,     $cv_family_name_ruby,
             $cv_first_name, $cv_first_name_ruby, $cv_birth_month,
-            $cv_birth_day,  $cv_gender,          $cv_nickname
+            $cv_birth_day,  $cv_gender,          $cv_nickname,
+            $image          # 画像URLを取得
         ) = @$ary_ref;
+
         print "<div>";
         print "<p class='character'><b>", $id, "</b>　", escape_html($type),
           "</p>\n";
+
+        # 画像を表示
+        if ($image) {
+            print "<img src='", escape_html($image), "' alt='", escape_html($ch_name), "' />";
+        }
+
         print "<p class='character'>　　 <ruby><rb>", escape_html($ch_name),
           "<rb><rp>（</rp><rt>", escape_html($ch_name_ruby),
           "</rt><rp>）</rp></ruby>　", $ch_birth_month, "月", $ch_birth_day,
           "日生まれ　", $ch_gender == 1 ? "女性" : "男性", "　",
           $is_idol == 1 ? "アイドル" : "アイドル以外", "　",
           escape_html($ch_blood_type), "型", "</p>";
+
         if ($cv_name) {
             print "<p class='character'>　　 CV：<ruby><rb>",
               escape_html($cv_name),      "<rb><rp>（</rp><rt>",
